@@ -80,7 +80,6 @@ class UserRankingController extends Controller
     // ランキング情報取得
     public function get_user_ranking()
     {
-      // ランキング情報を取得
       // 順位付けの優先度は①スコアが高い②登録日が早い
       $user_scores = DB::table('user_profiles')
             ->join('user_rankings', 'user_profiles.id', '=', 'user_rankings.user_profile_id')
@@ -101,10 +100,9 @@ class UserRankingController extends Controller
       // 被りのないものができるまでuuid生成
       while($same_flg == true)
       {
-        $new_uuid = (string)Str::uuid();
-
+        $new_uuid  = (string)Str::uuid();
         $same_uuid = UserProfile::where('uuid', '=', $new_uuid)
-        ->first();
+              ->first();
         if(empty($same_uuid))
         {
           $same_flg = false;
