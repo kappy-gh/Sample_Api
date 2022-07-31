@@ -6,5 +6,6 @@ use App\Http\Controllers\UserRankingController;
 
 Route::group(['middleware' => ['api']], function(){
   Route::post('/user/ranking/add', [UserRankingController::class, 'add_user_ranking']);
-  Route::post('/user/ranking/get', [UserRankingController::class, 'get_user_ranking']);
+  Route::get('/user/ranking/get', [UserRankingController::class, 'get_user_ranking']);
+  Route::post('/user/info/get', [UserRankingController::class, 'get_user_info']);
 });

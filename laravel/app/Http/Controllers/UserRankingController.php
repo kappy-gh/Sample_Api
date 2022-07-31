@@ -14,26 +14,9 @@ class UserRankingController extends Controller
     public function add_user_ranking(Request $request)
     {
       // リクエストパラメータを受け取る
-      $uuid      = (int)$request->input('uuid');
+      $uuid      = (string)$request->input('uuid');
       $user_name = (string)$request->input('user_name');
       $score     = (int)$request->input('score');
-
-      // エラー
-      $error_msg = '';
-
-      if($user_name == null)
-      {
-        $error_msg = '名前が未入力です。';
-        return $error_msg;
-      }
-
-      $name_max = 10;
-      $name_length = strlen($user_name);
-      if(!ctype_alnum($user_name) || $name_length > $name_max)
-      {
-        $error_msg = '名前は10文字以内の英数字のみで入力してください。';
-        return $error_msg;
-      }
 
       if($uuid == null) // 新規ユーザー
       {
@@ -54,6 +37,8 @@ class UserRankingController extends Controller
           'user_profile_id' => $user_profile_id,
           'score'           => $score
         ]);
+
+        return $new_uuid;
       }
       else // 既存ユーザー
       {
@@ -74,6 +59,8 @@ class UserRankingController extends Controller
                   'score' => $score
                 ]);
         }
+
+        return $score;
       }
     }
 
@@ -88,7 +75,28 @@ class UserRankingController extends Controller
             ->orderBy('user_rankings.updated_at', 'asc')
             ->get();
 
-      return $user_scores;
+      return ["responseParams" => $user_scores];
+    }
+
+    // ユーザー情報取得
+    public function get_user_info(Request $request)
+    {
+      // リクエストパラメータを受け取る
+      $uuid = (string)$request->input('uuid');
+
+      // uuidに紐づくユーザー情報を取得する
+      $array_user_data = DB::table('user_rankings')
+            ->join('user_profiles', 'user_rankings.user_profile_id', '=', 'user_profiles.id')
+            ->select('user_profiles.user_name', 'user_rankings.score')
+            ->where('user_profiles.uuid', '=', $uuid)
+            ->first();
+      $user_name  = $array_user_data->user_name;
+      $high_score = $array_user_data->score;
+
+        return ["responseParams" => [[
+          'user_name'  => $user_name,
+          'high_score' => $high_score
+        ]]];
     }
 
     // uuidを生成する
