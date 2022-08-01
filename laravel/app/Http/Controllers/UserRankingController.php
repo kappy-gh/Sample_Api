@@ -59,8 +59,6 @@ class UserRankingController extends Controller
                   'score' => $score
                 ]);
         }
-
-        return $score;
       }
     }
 
